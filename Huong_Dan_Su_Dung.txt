@@ -1,0 +1,96 @@
+==============================================================================
+   HƯỚNG DẪN SỬ DỤNG HỆ THỐNG TỔNG HỢP VÀ GIÁM SÁT VIỆC LẬP HỒ SƠ KIỂM SÁT ĐIỆN TỬ
+                    VIỆN KIỂM SÁT NHÂN DÂN THÀNH PHỐ HỒ CHÍ MINH
+==============================================================================
+
+1. QUY CHUẨN ĐỊNH DẠNG 22 CỘT CỦA FILE TỔNG (ĐÃ BỎ HẲN CỘT NOTE LỖI):
+------------------------------------------------------------------------------
+Toàn bộ các file kết xuất (1_FILE_TONG.xlsx, 2_DANH_SACH_CAN_KIEM_TRA.xlsx,
+3_FILE_TONG_HOAN_THIEN.xlsx) đều đồng bộ 100% theo đúng cấu trúc 22 cột:
+
+* TỪ CỘT 1 ĐẾN CỘT 8: GIỮ NGUYÊN HIỆN TRẠNG TỪ FILE XUẤT XUỐNG CỦA ĐƠN VỊ
+  1. STT
+  2. Thông tin vụ án          (Giữ nguyên trọn vẹn văn bản ô ban đầu)
+  3. Loại tội                 (Giữ nguyên từ file đơn vị)
+  4. Tội                      (Giữ nguyên từ file đơn vị)
+  5. Thông tin bị can         (Giữ nguyên từ file đơn vị)
+  6. Loại thụ lý              (Giữ nguyên từ file đơn vị)
+  7. Trạng thái vụ án         (Giữ nguyên từ file đơn vị)
+  8. Trạng thái biểu mẫu      (Giữ nguyên từ file đơn vị)
+
+* CÁC CỘT CÒN LẠI (TÁCH THÔNG TIN TỪ Ô THÔNG TIN VỤ ÁN VÀ GHI CHÚ KIỂM TRA):
+  9. MÃ VỤ ÁN                 (Bóc tách tự động chuẩn xác)
+  10. TÊN VỤ ÁN               (Bóc tách tự động)
+  11. SỐ KTVA                 (Bóc tách tự động)
+  12. NGÀY KTVA               (Bóc tách tự động, định dạng dd/mm/yyyy)
+  13. NGÀY TIẾP NHẬN HỐ SƠ    (Bóc tách tự động, định dạng dd/mm/yyyy)
+  14. THỜI HẠN XỬ LÝ          (Bóc tách tự động, định dạng dd/mm/yyyy)
+  15. NOTE LÀM GIÀU DỮ LIỆU   (Chỉ điền "ĐÃ ĐÍNH KÈM", "TẠM ỔN" là tính ĐẠT; có điền thông tin khác là tính LỖI)
+  16. NGÀY HIỆN TẠI SO VỚI NGÀY KTVA (Số ngày chênh lệch tính đến ngày hiện tại)
+  17. ĐƠN VỊ                  (Tên đơn vị chuẩn hóa: CHỈ GIỮ LẠI KHU VỰC VÀ SỐ [KHU VỰC 1, KHU VỰC 2...], PHÒNG VÀ SỐ [PHÒNG 1, PHÒNG 2...]. Tự động loại bỏ .DT, .ST, .TT)
+  18. NOTE NGÀY KIỂM TRA      (Cán bộ tự tay điền ngày kiểm tra dd/mm/yyyy)
+  19. NOTE                    (Ghi chú tự do, ví dụ "ĐÃ ĐĂNG KÝ XÓA"...)
+  20. GHI CHÚ ĐỂ BÁO TÌNH HÌNH (Ghi chú cụ thể của cán bộ - cột này KHÔNG bị tính là lỗi)
+  21. NOTE KIỂM TRA           (Trạng thái "ĐÃ KIỂM TRA", để trống khi chưa kiểm tra)
+  22. NGÀY BÁO TÌNH HÌNH      (Ngày báo cáo dd/mm/yyyy, cán bộ tự điền tay vào)
+
+* ĐỊNH DẠNG HÌNH THỨC EXCEL TIỆN ÍCH:
+  - Tên Sheet dữ liệu: "DATA"
+  - Tiêu đề dòng 1: Nền VÀNG (#FFFF00), chữ đen in đậm (Segoe UI 10pt)
+  - ĐÓNG BĂNG NGANG VÀ DỌC (Freeze Panes tại ô J2): Cố định dòng 1 và các cột 1-9 (đến hết cột MÃ VỤ ÁN).
+  - Tự động bật mũi tên lọc AutoFilter ở toàn bộ dòng tiêu đề.
+  - Bật hiển thị lưới ô (gridlines) và viền ô chuẩn thẩm mỹ.
+  - File hoàn thiện (Bước 2): Tự động kèm thêm Sheet "BẢNG THEO DÕI" (Pivot Table theo Đơn vị, sắp xếp số lỗi từ nhiều tới ít, đóng băng C5).
+
+2. CƠ CHẾ BẢO VỆ CHỐNG GHI ĐÈ DỮ LIỆU (OVERWRITE PROTECTION):
+------------------------------------------------------------------------------
+  - Cảnh báo tự động: Khi bấm Nút 1, nếu file `2_DANH_SACH_CAN_KIEM_TRA.xlsx` đã tồn tại và đã có dữ liệu ghi chú của cán bộ, ứng dụng sẽ hiện hộp thoại Cảnh báo xác nhận để tránh mất dữ liệu do bấm nhầm.
+  - Tự động sao lưu dự phòng: Trước khi ghi đè bất kỳ file nào (File 1, 2, 3, 4, 5), hệ thống luôn tự động tạo bản sao lưu an toàn vào thư mục:
+    `📁 Backup/{tên_file}_backup_YYYYMMDD_HHMMSS.xlsx`
+  - Tùy chọn Timestamp: Tích chọn "⏱️ Đặt tên file xuất kèm ngày giờ (Timestamp)" để hệ thống tự động gắn hậu tố thời gian vào tên file (VD: `2_DANH_SACH_CAN_KIEM_TRA_20261003_1430.xlsx`), lưu vết song song không bao giờ trùng lặp.
+
+3. QUY TRÌNH VẬN HÀNH 2 BƯỚC HẰNG NGÀY:
+------------------------------------------------------------------------------
+* BƯỚC 1: TỔNG HỢP VÀ TÁCH ÁN CẦN KIỂM TRA
+  1. Mở ứng dụng (chạy `Chay_Ung_Dung.bat` hoặc giao diện `app_vks.py`).
+  2. Nguồn file đơn vị:
+     - Bấm "📁 Thư mục..." để quét toàn bộ file trong thư mục.
+     - HOẶC bấm "📄 Chọn file...", giữ phím Ctrl/Shift để chọn 1, 2 hoặc nhiều file lẻ.
+  3. File Tổng cũ (Tùy chọn nạp nối tiếp thông minh):
+     - Nếu đã có sẵn File Tổng cũ (ví dụ 11082026.xlsx): Bấm "🔍 Chọn...".
+     - Hệ thống tự động nhận diện đúng Sheet 'DATA', bảo toàn 100% các vụ án sẵn có và các ghi chú cũ, chỉ nạp thêm các vụ án mới.
+  4. Bấm nút màu Xanh Dương:
+     "⚡ Thực hiện Bước 1: Tổng hợp & Lọc danh sách kiểm tra (>= 16 ngày)"
+     - Xuất ra `1_FILE_TONG.xlsx` (22 cột nền vàng, đóng băng J2)
+     - Tách ra `2_DANH_SACH_CAN_KIEM_TRA.xlsx` (22 cột nền vàng, án >= 16 ngày và chưa ghi chú, đóng băng J2)
+
+* BƯỚC 2: KIỂM TRA VÀ XUẤT BÁO CÁO LÃNH ĐẠO & DANH SÁCH LỖI GỬI ĐƠN VỊ
+  1. Cán bộ mở file `2_DANH_SACH_CAN_KIEM_TRA.xlsx`:
+     - Cột NOTE NGÀY KIỂM TRA (Cột 18): Cán bộ tự tay điền ngày kiểm tra (ví dụ: 03/10/2026...).
+     - Cột NOTE LÀM GIÀU DỮ LIỆU (Cột 15):
+       + Nếu đạt: Điền "ĐÃ ĐÍNH KÈM" hoặc "TẠM ỔN" -> Tính vào SỐ VỤ ĐÃ ĐÍNH KÈM (KHÔNG TÍNH LỖI).
+       + Nếu có lỗi/vi phạm: Điền cụ thể lỗi (ví dụ: "chưa đính kèm", "LƯU TÊN FILE DOCUMENT", "chưa đổi tên file", "chậm tiến độ"...) -> Tính vào SỐ VỤ LỖI.
+     - Cột GHI CHÚ ĐỂ BÁO TÌNH HÌNH (Cột 20): Ghi chú cụ thể -> KHÔNG bị tính lỗi!
+     - Các vụ án chưa kiểm tra: ĐỂ TRỐNG HOÀN TOÀN! Ô trống tuyệt đối KHÔNG bị tính lỗi.
+     - Lưu file (Ctrl+S) và đóng Excel.
+  2. Trên ứng dụng, bấm nút màu Cam:
+     "📊 Thực hiện Bước 2: Cập nhật kết quả & Xuất Báo cáo - Danh sách lỗi"
+     - Hệ thống tự động tạo 4 sản phẩm nghiệp vụ hoàn chỉnh:
+       1. `3_FILE_TONG_HOAN_THIEN.xlsx`:
+          + Sheet `DATA`: Đầy đủ 22 cột nền vàng hoàn thiện (đóng băng J2).
+          + Sheet `BẢNG THEO DÕI`: Bảng tổng hợp đợt kiểm tra mới nhất gồm:
+            STT | ĐƠN VỊ | TỔNG SỐ VỤ ĐÃ KIỂM TRA | SỐ VỤ ĐÃ ĐÍNH KÈM | SỐ VỤ LỖI | TỶ LỆ LỖI (%)
+            (Sắp xếp số lượng lỗi của các đơn vị từ nhiều tới ít, có dòng Tổng cộng).
+       2. `4_BAO_CAO_VU_LOI_INFOGRAPHIC.xlsx`:
+          + Thẻ KPI: Tổng số vụ đã kiểm tra | Số vụ đính kèm | Số vụ phát hiện lỗi | Tỷ lệ lỗi.
+          + Mục I: Bảng tổng hợp theo đơn vị (báo cáo lãnh đạo, xếp từ nhiều lỗi tới ít lỗi).
+          + Mục II: Danh sách chi tiết các vụ án phát hiện lỗi trong đợt kiểm tra.
+       3. `5_DANH_SACH_VU_LOI_GUI_CAC_DON_VI.xlsx`:
+          + File tổng 7 cột chuẩn nghiệp vụ gửi tất cả các đơn vị khắc phục lỗi:
+            STT | MÃ VỤ ÁN | SỐ KTVA | NGÀY KTVA | NOTE LÀM GIÀU DỮ LIỆU | ĐƠN VỊ | NOTE NGÀY KIỂM TRA
+          + Tiêu đề nền Xanh Teal sẫm (#156082), chữ trắng in đậm, bật AutoFilter, Freeze Panes C2.
+       4. Thư mục `📁 Cac_Don_Vi_Khac_Phuc/`:
+          + Tự động chia tách từng file riêng cho từng đơn vị có lỗi (VD: `KHU_VUC_4_Khac_Phuc_Loi.xlsx`, `PHONG_7_Khac_Phuc_Loi.xlsx`...)
+          + Cán bộ có thể đính kèm gửi ngay cho từng đơn vị mà không cần lọc tay!
+
+==============================================================================

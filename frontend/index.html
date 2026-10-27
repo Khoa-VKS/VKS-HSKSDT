@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tổng hợp và giám sát việc lập hồ sơ kiểm sát điện tử - VKSND TP.HCM</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Top Header Banner -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <div class="emblem-wrapper">
+                    <!-- Biểu tượng Ngành Kiểm Sát: Khiên & Cán cân Công lý -->
+                    <svg viewBox="0 0 64 64" class="vks-emblem" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M32 4L8 14V30C8 44.5 18.2 57.8 32 61C45.8 57.8 56 44.5 56 30V14L32 4Z" fill="#0B2545" stroke="#FFB300" stroke-width="2.5"/>
+                        <circle cx="32" cy="32" r="20" fill="#133E6E" stroke="#FFD54F" stroke-width="1.5"/>
+                        <path d="M32 18V46M20 25H44M16 35L20 25L24 35C24 37.2 22.2 39 20 39C17.8 39 16 37.2 16 35ZM40 35L44 25L48 35C48 37.2 46.2 39 44 39C41.8 39 40 37.2 40 35Z" stroke="#FFD54F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="32" cy="18" r="2.5" fill="#FFD54F"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h1>VIỆN KIỂM SÁT NHÂN DÂN THÀNH PHỐ HỒ CHÍ MINH</h1>
+                    <p class="subtitle">TỔNG HỢP VÀ GIÁM SÁT VIỆC LẬP HỒ SƠ KIỂM SÁT ĐIỆN TỬ</p>
+                </div>
+            </div>
+            <div class="header-status">
+                <div class="badge-status" id="backendStatus">
+                    <span class="pulse-dot"></span>
+                    <span id="backendStatusText">Backend nhúng: Đang kết nối...</span>
+                </div>
+                <button id="btnQuickOpenFolder" class="btn-secondary-sm" title="Mở thư mục làm việc trong máy tính">
+                    📂 Mở thư mục kết quả
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workflow Container -->
+    <main class="main-content">
+        <!-- Quy trình 2 bước trực quan -->
+        <div class="stepper-bar">
+            <div class="step-indicator active" id="stepIndicator1">
+                <div class="step-num">1</div>
+                <div class="step-info">
+                    <span class="step-title">BƯỚC 1: TỔNG HỢP & TÁCH ÁN</span>
+                    <span class="step-desc">Gộp 23 file và lọc danh sách &ge; 16 ngày</span>
+                </div>
+            </div>
+            <div class="step-arrow">&rarr;</div>
+            <div class="step-indicator" id="stepIndicator2">
+                <div class="step-num">2</div>
+                <div class="step-info">
+                    <span class="step-title">BƯỚC 2: CẬP NHẬT & BÁO CÁO</span>
+                    <span class="step-desc">Đồng bộ ghi chú kiểm tra và xuất Infographic</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-workflow">
+            <!-- THẺ BƯỚC 1 -->
+            <section class="card-step" id="cardStep1">
+                <div class="card-header">
+                    <div class="header-icon bg-navy">1</div>
+                    <div class="header-text">
+                        <h2>BƯỚC 1: TỔNG HỢP 23 FILE & TÁCH ÁN CẦN KIỂM TRA</h2>
+                        <p>Quét toàn bộ báo cáo của các đơn vị gửi về để tự động gộp và lọc án quá hạn.</p>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="form-group">
+                        <div class="label-with-mode">
+                            <label for="txtFolderPath">Nguồn file báo cáo của các đơn vị: <span class="req">*</span></label>
+                            <span class="mode-badge-hint" id="badgeInputMode">📁 Quét cả thư mục HOẶC 📄 Chọn 1 vài đơn vị</span>
+                        </div>
+                        <div class="input-with-btn">
+                            <input type="text" id="txtFolderPath" placeholder="Bấm 'Chọn thư mục' (quét cả thư mục) hoặc 'Chọn file đơn vị' (chọn 1 hoặc vài file)..." autocomplete="off">
+                            <button type="button" id="btnBrowseFolder" class="btn-browse" title="Chọn thư mục chứa nhiều file đơn vị">📁 Chọn thư mục...</button>
+                            <button type="button" id="btnBrowseUnitFiles" class="btn-browse highlight-btn" title="Chọn 1 hoặc giữ Ctrl/Shift để chọn nhiều file đơn vị">📄 Chọn file đơn vị...</button>
+                            <button type="button" id="btnClearFolderPath" class="btn-clear" title="Xóa bỏ nguồn đã chọn" style="display: none;">✕</button>
+                        </div>
+                        <!-- Khung hiển thị danh sách các file đơn vị nếu người dùng chọn từng file -->
+                        <div class="selected-files-chip-box" id="boxSelectedUnitFiles" style="display: none;">
+                            <div class="chip-header">
+                                <span class="chip-title">📋 <strong id="lblSelectedFilesCount">Đã chọn 0 file</strong>:</span>
+                                <span class="chip-tip">(Hệ thống sẽ chỉ tổng hợp dữ liệu từ các file này)</span>
+                            </div>
+                            <div class="chip-list" id="chipSelectedList"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="txtExistingMaster">File Tổng đã có từ trước <em>(Tùy chọn — Chỉ nạp thêm các vụ mới chưa có)</em>:</label>
+                        <div class="input-with-btn">
+                            <input type="text" id="txtExistingMaster" placeholder="Bỏ trống nếu tổng hợp mới từ đầu. Hoặc chọn 1_FILE_TONG.xlsx cũ để nạp thêm vụ mới..." autocomplete="off">
+                            <button type="button" id="btnBrowseExistingMaster" class="btn-browse">📄 Chọn file tổng cũ...</button>
+                            <button type="button" id="btnClearExistingMaster" class="btn-clear" title="Bỏ chọn file cũ" style="display: none;">✕</button>
+                        </div>
+                        <div class="field-hint">
+                            💡 <strong>Chế độ nạp thông minh:</strong> Khi chọn File Tổng cũ, hệ thống tự động lọc theo <strong>MÃ VỤ ÁN</strong>, <strong>chỉ thêm các vụ án mới chưa từng có</strong>, tự động bỏ qua các vụ đã có sẵn và <strong>bảo toàn 100% các ghi chú kiểm tra cũ</strong>!
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-half">
+                            <label for="spnDays">Ngưỡng lọc án tồn đọng (Số ngày KTVA):</label>
+                            <div class="input-unit">
+                                <input type="number" id="spnDays" value="16" min="1" max="365">
+                                <span class="unit-text">ngày trở lên</span>
+                            </div>
+                        </div>
+                        <div class="form-group col-half hint-box">
+                            <p class="hint-text">💡 <strong>Mẹo nghiệp vụ:</strong> Cán bộ trực tiếp ghi chú/chọn vào cột <strong>NOTE LÀM GIÀU DỮ LIỆU</strong> (ví dụ: <em>ĐÃ ĐÍNH KÈM</em>, <em>TẠM ỔN</em>, <em>LƯU TÊN FILE "DOCUMENT"</em>...) và <strong>GHI CHÚ ĐỂ BÁO TÌNH HÌNH</strong>. Các vụ chưa kiểm tra để trống hoàn toàn!</p>
+                        </div>
+                    </div>
+
+                    <div class="action-zone">
+                        <button type="button" id="btnRunStep1" class="btn-primary-action">
+                            <span class="btn-icon">⚡</span>
+                            <span>NÚT 1: BẮT ĐẦU TỔNG HỢP & TÁCH VỤ ÁN</span>
+                        </button>
+                    </div>
+
+                    <!-- Khu vực tiến trình Bước 1 -->
+                    <div class="loading-state" id="loadingStep1" style="display: none;">
+                        <div class="spinner"></div>
+                        <span class="loading-text">Đang quét và tổng hợp dữ liệu từ 23 đơn vị... Vui lòng đợi trong giây lát!</span>
+                    </div>
+
+                    <!-- Kết quả Bước 1 -->
+                    <div class="result-box" id="resultStep1" style="display: none;">
+                        <div class="result-header">
+                            <span class="result-badge success" id="badgeStep1">✅ TỔNG HỢP THÀNH CÔNG</span>
+                            <span class="result-time" id="timeStep1"></span>
+                        </div>
+
+                        <!-- Khung thông tin Nạp nối tiếp (chỉ hiện khi có chọn File Tổng cũ) -->
+                        <div class="append-mode-box" id="boxAppendStats" style="display: none;">
+                            <div class="append-mode-header">🔄 <strong>Chế độ nạp nối tiếp:</strong> Đã đối chiếu Mã vụ án</div>
+                            <div class="append-stats-grid">
+                                <div class="append-stat-item">
+                                    <span class="append-lbl">Vụ cũ sẵn có:</span>
+                                    <span class="append-val" id="resExistingCases">0</span>
+                                </div>
+                                <div class="append-stat-item highlight-success">
+                                    <span class="append-lbl">Vụ mới nạp thêm:</span>
+                                    <span class="append-val text-success" id="resNewAdded">+0</span>
+                                </div>
+                                <div class="append-stat-item">
+                                    <span class="append-lbl">Đã cập nhật/đối chiếu:</span>
+                                    <span class="append-val text-muted" id="resSkippedDupes">0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stats-grid-mini">
+                            <div class="stat-mini-card">
+                                <span class="stat-mini-lbl">File đơn vị đã đọc</span>
+                                <span class="stat-mini-val" id="resTotalFiles">0</span>
+                            </div>
+                            <div class="stat-mini-card">
+                                <span class="stat-mini-lbl" id="lblTotalCases">Tổng số vụ án gộp</span>
+                                <span class="stat-mini-val" id="resTotalCases">0</span>
+                            </div>
+                            <div class="stat-mini-card highlight">
+                                <span class="stat-mini-lbl">Án cần kiểm tra (&ge; 16 ngày)</span>
+                                <span class="stat-mini-val" id="resFilteredCases">0</span>
+                            </div>
+                        </div>
+
+                        <div class="output-files-list">
+                            <div class="file-item">
+                                <span class="file-icon">📄</span>
+                                <div class="file-meta">
+                                    <strong class="file-name">1_FILE_TONG.xlsx</strong>
+                                    <span class="file-path" id="pathFileTong"></span>
+                                </div>
+                            </div>
+                            <div class="file-item action-ready">
+                                <span class="file-icon">📋</span>
+                                <div class="file-meta">
+                                    <strong class="file-name">2_DANH_SACH_CAN_KIEM_TRA.xlsx</strong>
+                                    <span class="file-path" id="pathFileKt"></span>
+                                </div>
+                                <span class="action-tag">Hãy mở file này để thẩm tra & ghi chú lỗi!</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- THẺ BƯỚC 2 -->
+            <section class="card-step" id="cardStep2">
+                <div class="card-header">
+                    <div class="header-icon bg-orange">2</div>
+                    <div class="header-text">
+                        <h2>BƯỚC 2: CẬP NHẬT KẾT QUẢ & XUẤT BÁO CÁO VỤ LỖI</h2>
+                        <p>Nạp file đã thẩm định ghi chú để đồng bộ vào File Tổng và tạo Báo cáo Dashboard kèm Biểu đồ.</p>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="txtFileTong">File Tổng hợp (1_FILE_TONG.xlsx): <span class="req">*</span></label>
+                        <div class="input-with-btn">
+                            <input type="text" id="txtFileTong" placeholder="Đường dẫn tới file 1_FILE_TONG.xlsx..." autocomplete="off">
+                            <button type="button" id="btnBrowseFileTong" class="btn-browse">📄 Chọn file...</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="txtFileKt">File Kiểm tra đã ghi chú (2_DANH_SACH_CAN_KIEM_TRA.xlsx): <span class="req">*</span></label>
+                        <div class="input-with-btn">
+                            <input type="text" id="txtFileKt" placeholder="Đường dẫn tới file 2_DANH_SACH_CAN_KIEM_TRA.xlsx đã lưu ghi chú..." autocomplete="off">
+                            <button type="button" id="btnBrowseFileKt" class="btn-browse">📄 Chọn file...</button>
+                        </div>
+                    </div>
+
+                    <div class="rule-box">
+                        <div class="rule-icon">🛡️</div>
+                        <div class="rule-content">
+                            <strong>Tiêu chí đánh giá kết quả kiểm tra:</strong>
+                            Tại cột <em>NOTE LÀM GIÀU DỮ LIỆU</em> hoặc <em>GHI CHÚ ĐỂ BÁO TÌNH HÌNH</em>: Điền <em>"ĐÃ ĐÍNH KÈM"</em>, <em>"ĐẠT"</em>, <em>"TẠM ỔN"</em> được tính là <strong>ĐẠT (Không tính lỗi)</strong>. Nếu điền thông tin khác (như <em>"LƯU TÊN FILE \"DOCUMENT\""</em>, <em>"Chưa đính kèm tài liệu"</em>,...) được tính là <strong>LỖI</strong> và đưa vào Báo cáo Infographic. Các vụ chưa kiểm tra để trống hoàn toàn.
+                        </div>
+                    </div>
+
+                    <div class="action-zone">
+                        <button type="button" id="btnRunStep2" class="btn-warning-action">
+                            <span class="btn-icon">📊</span>
+                            <span>NÚT 2: CẬP NHẬT KẾT QUẢ & XUẤT BÁO CÁO INFOGRAPHIC</span>
+                        </button>
+                    </div>
+
+                    <!-- Khu vực tiến trình Bước 2 -->
+                    <div class="loading-state" id="loadingStep2" style="display: none;">
+                        <div class="spinner"></div>
+                        <span class="loading-text">Đang đối chiếu dữ liệu và tạo Biểu đồ Infographic...</span>
+                    </div>
+
+                    <!-- Kết quả Bước 2: Dashboard KPI -->
+                    <div class="result-box" id="resultStep2" style="display: none;">
+                        <div class="result-header">
+                            <span class="result-badge error">📊 BÁO CÁO CHUYÊN ĐỀ ĐÃ SẴN SÀNG</span>
+                            <span class="result-time" id="timeStep2"></span>
+                        </div>
+
+                        <!-- 4 Thẻ KPI lớn -->
+                        <div class="kpi-dashboard-grid">
+                            <div class="kpi-card navy">
+                                <span class="kpi-title">TỔNG SỐ ÁN TOÀN TP</span>
+                                <span class="kpi-number" id="kpiTotal">0</span>
+                                <span class="kpi-sub">Số vụ toàn thành phố</span>
+                            </div>
+                            <div class="kpi-card orange">
+                                <span class="kpi-title">ÁN TỒN &ge; 16 NGÀY</span>
+                                <span class="kpi-number" id="kpiKt">0</span>
+                                <span class="kpi-sub">Thuộc diện kiểm sát</span>
+                            </div>
+                            <div class="kpi-card red">
+                                <span class="kpi-title">SỐ VỤ PHÁT HIỆN LỖI</span>
+                                <span class="kpi-number" id="kpiErrors">0</span>
+                                <span class="kpi-sub">Cần chỉ đạo khắc phục</span>
+                            </div>
+                            <div class="kpi-card crimson">
+                                <span class="kpi-title">TỶ LỆ VI PHẠM</span>
+                                <span class="kpi-number" id="kpiRate">0.0%</span>
+                                <span class="kpi-sub">Trên số án kiểm tra</span>
+                            </div>
+                        </div>
+
+                        <!-- Danh sách đơn vị có nhiều lỗi nhất -->
+                        <div class="unit-ranking-section" id="unitRankingSection" style="display: none;">
+                            <h3>TOP ĐƠN VỊ CÓ ÁN CHẬM TIẾN ĐỘ / VI PHẠM:</h3>
+                            <div class="unit-tags-wrapper" id="unitTagsContainer"></div>
+                        </div>
+
+                        <div class="output-files-list">
+                            <div class="file-item">
+                                <span class="file-icon">💾</span>
+                                <div class="file-meta">
+                                    <strong class="file-name">3_FILE_TONG_HOAN_THIEN.xlsx</strong>
+                                    <span class="file-path" id="pathFileMaster"></span>
+                                </div>
+                            </div>
+                            <div class="file-item action-ready report">
+                                <span class="file-icon">📈</span>
+                                <div class="file-meta">
+                                    <strong class="file-name">4_BAO_CAO_VU_LOI_INFOGRAPHIC.xlsx</strong>
+                                    <span class="file-path" id="pathFileReport"></span>
+                                </div>
+                                <span class="action-tag red">Đã nhúng Biểu đồ BarChart & Thẻ KPI trình Lãnh đạo!</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <div class="footer-left">
+                <span>© 2026 Viện kiểm sát nhân dân Thành phố Hồ Chí Minh</span>
+                <span class="sep">•</span>
+                <span class="safe-badge">🔒 100% Chạy Offline trên máy tính — Bảo mật dữ liệu nghiệp vụ tuyệt đối</span>
+            </div>
+            <div class="footer-right">
+                <button type="button" class="btn-footer-open" id="btnFooterOpenFolder">📂 Mở thư mục kết quả trong Explorer</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
